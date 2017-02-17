@@ -1,4 +1,4 @@
-Redirect to https
+gitweb
 -----------------
 
-Redirect everything to the same vhost on https
+a basic gitweb setup
