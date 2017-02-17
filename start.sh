@@ -78,6 +78,7 @@ Alias / /usr/share/gitweb
 <Directory /usr/share/gitweb>
   Options +FollowSymLinks +ExecCGI
   AddHandler cgi-script .cgi
+  Require all granted
 </Directory>
 EOF
 
