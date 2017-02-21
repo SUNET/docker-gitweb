@@ -2,6 +2,7 @@
 
 rm -f /etc/apache2/sites-available/*
 rm -f /etc/apache2/sites-enabled/*
+rm -f /etc/apache2/conf.d/gitweb
 
 cat>/etc/apache2/conf-available/acme.conf<<EOF
 ProxyPass /.well-known/acme-challenge http://acme-c.sunet.se/.well-known/acme-challenge/
@@ -64,6 +65,9 @@ cat>/etc/apache2/sites-available/default-ssl.conf<<EOF
        SSLCertificateKeyFile $KEYDIR/private/${HOSTNAME}.key
 
        RewriteEngine On
+       <Location />
+       Require all granted
+       </Location>
 </VirtualHost>
 EOF
 
@@ -73,7 +77,7 @@ a2ensite default-ssl
 a2ensite default
 
 cat>/etc/apache2/conf-available/gitweb.conf<<EOF
-Alias / /usr/share/gitweb
+Alias / /usr/share/gitweb/
 
 <Directory /usr/share/gitweb>
   Options +FollowSymLinks +ExecCGI
@@ -85,8 +89,8 @@ EOF
 a2enconf gitweb
 
 cat>/etc/gitweb.conf<<EOF
-$projectroot = "/home/git/repositories/";
-$projects_list = "/home/git/projects.list";
+\$projectroot = "/home/git/repositories/";
+\$projects_list = "/home/git/projects.list";
 EOF
 
 mkdir -p /var/log/apache2 /var/lock/apache2 /var/run/apache2
