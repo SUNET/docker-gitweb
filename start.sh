@@ -26,7 +26,8 @@ EOF
 
 a2ensite default
 
-KEYDIR=/etc/ssl
+# This is set by an env when starting the container
+#KEYDIR=/etc/ssl
 mkdir -p $KEYDIR
 export KEYDIR
 
