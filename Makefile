@@ -1,7 +1,7 @@
 NAME=gitweb
 VERSION=latest
 
-all: build push
+all: build
 build:
 	docker build --no-cache=true -t $(NAME):$(VERSION) .
 	docker tag $(NAME):$(VERSION) docker.sunet.se/$(NAME):$(VERSION)

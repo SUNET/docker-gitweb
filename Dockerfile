@@ -1,8 +1,8 @@
-FROM ubuntu:14.04
+FROM debian:stretch
 MAINTAINER leifj@sunet.se
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 RUN apt-get -q update
-RUN apt-get -y upgrade
+RUN apt-get -y dist-upgrade
 RUN apt-get -y install apache2 gitweb
 RUN a2enmod rewrite
 RUN mkdir -p /var/www
