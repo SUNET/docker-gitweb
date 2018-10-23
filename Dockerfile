@@ -1,4 +1,4 @@
-FROM debian:stretch
+FROM debian:jessie
 MAINTAINER leifj@sunet.se
 RUN echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 RUN apt-get -q update
