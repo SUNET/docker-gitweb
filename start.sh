@@ -4,13 +4,23 @@ rm -f /etc/apache2/sites-available/*
 rm -f /etc/apache2/sites-enabled/*
 rm -f /etc/apache2/conf.d/gitweb
 
-cat>/etc/apache2/conf-available/acme.conf<<EOF
-ProxyPass /.well-known/acme-challenge http://acme-c.sunet.se/.well-known/acme-challenge/
-ProxyPassReverse /.well-known/acme-challenge http://acme-c.sunet.se/.well-known/acme-challenge/
+if [ ! -z "$ACMEDIR" ]; then
+   cat>/etc/apache2/conf-available/acme.conf<<EOF
+Alias /.well-known/acme-challenge $ACMEDIR
 EOF
+elif [ ! -z "$ACMEPROXY" ]; then
+   cat>/etc/apache2/conf-available/acme.conf<<EOF
+ProxyPass /.well-known/acme-challenge http://$ACMEPROXY/.well-known/acme-challenge/
+ProxyPassReverse /.well-known/acme-challenge http://$ACMEPROXY/.well-known/acme-challenge/
+EOF
+a2enmod proxy proxy_http
+else
+   cat>/etc/apache2/conf-available/acme.conf<<EOF
+# No ACME config provided
+EOF
+fi
 
 a2enconf acme
-a2enmod proxy proxy_http
 
 cat>/etc/apache2/sites-available/default.conf<<EOF
 <VirtualHost *:80>
@@ -26,10 +36,12 @@ EOF
 
 a2ensite default
 
-# This is set by an env when starting the container
-#KEYDIR=/etc/ssl
-mkdir -p $KEYDIR
-export KEYDIR
+if [ -z "$KEYDIR" ]; then
+   KEYDIR=/etc/ssl
+   export KEYDIR
+fi
+
+mkdir -p $KEYDIR $KEYDIR/private $KEYDIR/certs
 
 if [ ! -f "$KEYDIR/private/${HOSTNAME}.key" -o ! -f "$KEYDIR/certs/${HOSTNAME}.crt" ]; then
    make-ssl-cert generate-default-snakeoil --force-overwrite

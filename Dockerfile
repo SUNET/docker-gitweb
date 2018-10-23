@@ -12,4 +12,5 @@ COPY /apache2.conf /etc/apache2/
 EXPOSE 80
 EXPOSE 443
 VOLUME /etc/ssl
+ENV ACMEPROXY "acme-c.sunet.se"
 ENTRYPOINT ["/start.sh"]
